@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../node_modules/flowbite";
+@plugin "flowbite/plugin";
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
