@@ -1,5 +1,6 @@
 <script setup>
   import Sidebar from './components/Sidebar.vue';
+  import './components/SvgIcon.vue';
 </script>
 
 <template>
