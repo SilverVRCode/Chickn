@@ -26,7 +26,7 @@
         <li>
           <a href="#" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group flex items-center">
             <SvgIcon
-              is="search"
+              is="recipes"
               color="currentColor"
               size="20px"
               class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
@@ -47,38 +47,72 @@
         </li>
       </ul>
       <ul class="pt-4 mt-4 space-y-2 font-medium border-t border-gray-200 dark:border-gray-700">
-        <li>
-          <a @click.prevent="login" href="#" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group flex items-center">
-            <SvgIcon
-              is="play"
-              color="currentColor"
-              size="20px"
-              class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+        <li v-if="isAuthenticated" class="relative">
+          <div
+            class="flex items-center p-2 rounded-lg bg-gray-100 dark:bg-gray-700 cursor-pointer"
+            @click="toggleUserMenu"
+          >
+            <img
+              :src="user.picture"
+              :alt="user.name"
+              class="w-8 h-8 rounded-full mr-3"
             />
-            <span class="flex-1 ms-3 whitespace-nowrap text-left">Sign In</span>
-          </a>
+            <span class="flex-1 ms-3 whitespace-nowrap text-left">{{ user.name }}</span>
+          </div>
+          <div
+            v-if="showUserMenu"
+            class="absolute left-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-50"
+          >
+            <ul>
+              <li>
+                <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white cursor-not-allowed opacity-60">
+                  Profile
+                </a>
+              </li>
+              <li>
+                <a @click.prevent="handleSignOut" href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white">
+                  Sign Out
+                </a>
+              </li>
+            </ul>
+          </div>
         </li>
-        <li>
-          <a @click.prevent="login" href="#" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group flex items-center">
-            <SvgIcon
-              is="search"
-              color="currentColor"
-              size="20px"
-              class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-            />
-            <span class="flex-1 ms-3 whitespace-nowrap text-left">Sign Up</span>
-          </a>
-        </li>
+        <template v-else>
+          <li>
+            <a @click.prevent="login" href="#" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group flex items-center">
+              <SvgIcon
+                is="login"
+                color="currentColor"
+                size="20px"
+                class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              />
+              <span class="flex-1 ms-3 whitespace-nowrap text-left">Sign In</span>
+            </a>
+          </li>
+          <li>
+            <a @click.prevent="login" href="#" class="p-2 text-left text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group flex items-center">
+              <SvgIcon
+                is="search"
+                color="currentColor"
+                size="20px"
+                class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+              />
+              <span class="flex-1 ms-3 whitespace-nowrap text-left">Sign Up</span>
+            </a>
+          </li>
+        </template>
       </ul>
     </div>
   </aside>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useAuth0 } from '@auth0/auth0-vue';
 import SvgIcon from './SvgIcon.vue';
 
-const { loginWithRedirect } = useAuth0();
+const { loginWithRedirect, isAuthenticated, user, logout } = useAuth0();
+const showUserMenu = ref(false);
 
 function login() {
   loginWithRedirect();
@@ -87,5 +121,13 @@ function login() {
 function toggleSidebar() {
   const sidebar = document.getElementById('separator-sidebar');
   sidebar.classList.toggle('-translate-x-full');
+}
+
+function toggleUserMenu() {
+  showUserMenu.value = !showUserMenu.value;
+}
+
+function handleSignOut() {
+  logout({ returnTo: window.location.origin });
 }
 </script>
